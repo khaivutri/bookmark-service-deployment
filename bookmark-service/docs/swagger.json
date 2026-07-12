@@ -1,0 +1,209 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a simple REST API for a bookmark service.",
+        "title": "Bookmark Service API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "basePath": "/",
+    "paths": {
+        "/health-check": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health Check"
+                ],
+                "summary": "Health Check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.HealthReport"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/model.HealthReport"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/links/redirect/{code}": {
+            "get": {
+                "description": "Redirects the client to the original URL using the provided short code.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShortenURL"
+                ],
+                "summary": "Redirect to original URL",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Short code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirect to original URL"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Message"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Message"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/links/shorten": {
+            "post": {
+                "description": "Generates a short code for the provided URL.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ShortenURL"
+                ],
+                "summary": "Create Shorten Link",
+                "parameters": [
+                    {
+                        "description": "Shorten URL request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ShortenURLReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ShortenURLRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Message"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Message"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.ShortenURLReq": {
+            "type": "object",
+            "required": [
+                "exp",
+                "url"
+            ],
+            "properties": {
+                "exp": {
+                    "description": "Exp is the expiration time of the shortened URL in seconds.",
+                    "type": "integer",
+                    "minimum": 5
+                },
+                "url": {
+                    "description": "URL is the original URL to shorten.",
+                    "type": "string",
+                    "example": "https://example.com"
+                }
+            }
+        },
+        "dto.ShortenURLRes": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Code is the shortened URL code returned to the client.",
+                    "type": "string",
+                    "example": "AbCDeFK"
+                },
+                "message": {
+                    "description": "Message provides a status message for the operation.",
+                    "type": "string",
+                    "example": "Shorten URL generated successfully!"
+                }
+            }
+        },
+        "model.HealthReport": {
+            "type": "object",
+            "properties": {
+                "dependency": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "example": {
+                        "{\"redis\"": " \"UP\"}"
+                    }
+                },
+                "instance_id": {
+                    "type": "string",
+                    "example": "cbe1a562-596b-45d0-bf8b-a999b23b184a"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "OK"
+                },
+                "service_name": {
+                    "type": "string",
+                    "example": "bookmark_service"
+                }
+            }
+        },
+        "response.Message": {
+            "type": "object",
+            "properties": {
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

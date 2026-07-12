@@ -1,0 +1,141 @@
+basePath: /
+definitions:
+  dto.ShortenURLReq:
+    properties:
+      exp:
+        description: Exp is the expiration time of the shortened URL in seconds.
+        minimum: 5
+        type: integer
+      url:
+        description: URL is the original URL to shorten.
+        example: https://example.com
+        type: string
+    required:
+    - exp
+    - url
+    type: object
+  dto.ShortenURLRes:
+    properties:
+      code:
+        description: Code is the shortened URL code returned to the client.
+        example: AbCDeFK
+        type: string
+      message:
+        description: Message provides a status message for the operation.
+        example: Shorten URL generated successfully!
+        type: string
+    type: object
+  model.HealthReport:
+    properties:
+      dependency:
+        additionalProperties:
+          type: string
+        example:
+          '{"redis"': ' "UP"}'
+        type: object
+      instance_id:
+        example: cbe1a562-596b-45d0-bf8b-a999b23b184a
+        type: string
+      message:
+        example: OK
+        type: string
+      service_name:
+        example: bookmark_service
+        type: string
+    type: object
+  response.Message:
+    properties:
+      details:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: This is a simple REST API for a bookmark service.
+  title: Bookmark Service API
+  version: "1.0"
+paths:
+  /health-check:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.HealthReport'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/model.HealthReport'
+      summary: Health Check
+      tags:
+      - Health Check
+  /v1/links/redirect/{code}:
+    get:
+      consumes:
+      - application/json
+      description: Redirects the client to the original URL using the provided short
+        code.
+      parameters:
+      - description: Short code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Redirect to original URL
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Message'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Message'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Message'
+      summary: Redirect to original URL
+      tags:
+      - ShortenURL
+  /v1/links/shorten:
+    post:
+      consumes:
+      - application/json
+      description: Generates a short code for the provided URL.
+      parameters:
+      - description: Shorten URL request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ShortenURLReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ShortenURLRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Message'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Message'
+      summary: Create Shorten Link
+      tags:
+      - ShortenURL
+swagger: "2.0"
