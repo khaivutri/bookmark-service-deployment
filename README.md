@@ -225,6 +225,27 @@ The current deployment uses three separate API services so Nginx can target each
 
 ---
 
+## CD Pipeline
+ 
+This project uses GitHub Actions to automatically deploy the application after the CI pipeline succeeds.
+ 
+**Trigger:**
+- Runs automatically when the **CI-Pipeline** workflow completes successfully
+- Only proceeds if:
+  - the CI run concluded with `success`,
+  - the triggering event was a `push`,
+  - the push was made to the `main` branch
+**Pipeline steps:**
+ 
+1. **Deploy application** – runs on a self-hosted runner and performs:
+   - `git pull` to fetch the latest deployment configuration
+   - `docker-compose rm -f bookmark_service` to remove the old container
+   - `docker-compose pull bookmark_service` to pull the latest image
+   - `docker-compose up -d --no-deps bookmark_service bookmark_service2 bookmark_service3` to redeploy the service instances
+   - `docker system prune -f` to clean up unused Docker resources
+> Note: The CD pipeline is decoupled from CI — it only triggers via `workflow_run` after CI finishes successfully on `main`, ensuring that only tested and verified builds are deployed.
+ 
+---
 ## Security Notes
 
 - Do not commit real secrets or production credentials in [deployment/bookmark_service/.env](deployment/bookmark_service/.env).
