@@ -1,0 +1,24 @@
+name: CD-Pipeline
+on:
+  workflow_run:
+    workflows: ["CI-Pipeline"]
+    types:
+      - completed
+
+jobs:
+  cd_pipeline:
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main'
+    runs-on: self-hosted
+    steps:
+      - name: Deply application
+        working-directory: /root/deploy/bookmark-service-deployment
+        run: |
+          echo "Deploying application..."
+          git pull
+          docker-compose rm -f bookmark_service
+          docker-compose pull bookmark_service
+          docker-compose up -d --no-deps bookmark_service bookmark_service2 bookmark_service3
+          docker system prune -f
