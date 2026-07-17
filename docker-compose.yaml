@@ -6,7 +6,7 @@ services:
     container_name: redis
 
   bookmark_service:
-    image: khaivutri/shorten_link:deploy
+    image: khaivutri/shorten_link:v0.0.1
     container_name: bookmark_service
     depends_on:
       - redis
@@ -14,7 +14,7 @@ services:
       - ./bookmark_service/.env
 
   bookmark_service2:
-    image: khaivutri/shorten_link:deploy
+    image: khaivutri/shorten_link:v0.0.1
     container_name: bookmark_service2
     depends_on:
       - redis
@@ -22,7 +22,7 @@ services:
       - ./bookmark_service/.env
 
   bookmark_service3:
-    image: khaivutri/shorten_link:deploy
+    image: khaivutri/shorten_link:v0.0.1
     container_name: bookmark_service3
     depends_on:
       - redis
