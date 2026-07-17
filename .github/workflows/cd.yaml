@@ -1,21 +1,18 @@
 name: CD-Pipeline
 on:
-  repository_dispatch:
-    types: [trigger-from-ci]
-
+  push:
+    branches:
+      - main
 jobs:
   cd_pipeline:
-    if: github.event.client_payload.ref == 'refs/heads/main' || startsWith(github.event.client_payload.ref, 'refs/tags/')
     runs-on: self-hosted
     steps:
       - name: Deploy application
         working-directory: /root/deploy/bookmark-service-deployment
         run: |
-          echo "Deploying commit ${{ github.event.client_payload.sha }} from ${{ github.event.client_payload.ref }}..."
+          echo "Deploying application..."
 
-          git fetch --all && git reset --hard origin/main
-
-          sleep 5 
+          git pull
 
           docker compose pull bookmark_service
           docker compose up -d --no-deps bookmark_service bookmark_service2 bookmark_service3
