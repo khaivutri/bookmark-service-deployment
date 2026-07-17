@@ -1,9 +1,7 @@
 name: CD-Pipeline
 on:
-  workflow_run:
-    workflows: ["CI-Pipeline"]
-    types:
-      - completed
+  repository_dispatch:
+    types: [trigger-from-ci]
 
 jobs:
   cd_pipeline:
