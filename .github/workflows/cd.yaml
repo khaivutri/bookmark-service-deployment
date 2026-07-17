@@ -17,6 +17,6 @@ jobs:
 
           sleep 5 
 
-          docker-compose pull bookmark_service
-          docker-compose up -d --no-deps bookmark_service bookmark_service2 bookmark_service3
+          docker compose pull bookmark_service
+          docker compose up -d --no-deps bookmark_service bookmark_service2 bookmark_service3
           docker system prune -f
