@@ -28,7 +28,8 @@ This repository does not include the application source code. It is intended to 
 
 The deployment exposes a single entry point through Nginx, which routes traffic to the portal frontend and to the Bookmark Service API. The API is deployed as three separate instances for load balancing, while Redis provides persistent storage for shortened URLs.
 
-<img width="1688" height="969" alt="image" src="https://github.com/user-attachments/assets/29748fc4-edce-45a9-adac-3eecbbfb54fe" />
+<img width="1615" height="949" alt="image" src="https://github.com/user-attachments/assets/16707de7-b325-49c8-8942-06e02bc76f72" />
+
 
 ### Request Flow
 
